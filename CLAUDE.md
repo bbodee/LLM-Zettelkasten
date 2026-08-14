@@ -18,7 +18,7 @@ State: **planning phase.** Only docs exist.
 
 ## Non-negotiables (settled — do not relitigate)
 
-From [problem.md](problem.md) §"Design decisions" and [docs/decisions.md](docs/decisions.md):
+From [docs/problem.md](docs/problem.md) §"Design decisions" and [docs/decisions.md](docs/decisions.md):
 
 1. Skills-first, no MCP. Scripts are deterministic; skills orchestrate.
 2. **v1 = exactly two skills: `zk-recall` and `zk-log`.** Index and lint are scripts
@@ -42,7 +42,7 @@ From [problem.md](problem.md) §"Design decisions" and [docs/decisions.md](docs/
 
 ## Scope fence
 
-**Authoritative list: [problem.md](problem.md) §"Out of scope for v1".** Read it before
+**Authoritative list: [docs/problem.md](docs/problem.md) §"Out of scope for v1".** Read it before
 proposing or building anything not already in [architecture.md](architecture.md).
 
 Anything on that list is not built in v1 — not as a stub, not as a flag, not "while
