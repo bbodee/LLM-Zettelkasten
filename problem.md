@@ -30,6 +30,28 @@ a read-only archive; no migration.
    eliminates the old `zk:compress` command entirely.
 7. **Fresh vault.** Old vault mounted/copied to `archive/` untouched.
 
+### Amendments (2026-08-14, post prior-art survey — binding; details in decisions.md)
+
+These carry the same "do not relitigate" weight as the numbered decisions above.
+
+8. **decisions.md vs enhancements.md split (D-005).** decisions.md (repo and
+   vault level) records only durable choices that bind future work. Deferrals
+   and out-of-scope discoveries live in `enhancements.md`; a deferral is an
+   enhancement with a `trigger:` condition. Fired triggers graduate via a new
+   decision entry or are consciously re-parked. Rationale: deferral entries
+   dilute the decision log into a journal and pad every read of the file.
+9. **Vault decision entries gain IDs and a supersession marker (D-002).**
+   Entries are numbered `D-NNN` (unique per file); the one permitted amendment
+   to an old entry is an appended `superseded-by: D-NNN (YYYY-MM-DD)` line.
+   `/zk:log` step 2 reads existing entries before appending and writes the
+   marker when a new decision replaces an old one. Reflect in SPEC.md.
+10. **`summary:` is retrieval-critical (D-003).** zk-log writes dense summaries
+    at draft time; zk_lint backstops with mechanical checks (length floor,
+    banned lazy patterns). Reflect in SPEC.md and both skills.
+11. **Read-before-write (D-004).** zk-log never updates project.md or an
+    existing topics/ note without reading the current version first; never
+    duplicates an existing section.
+
 ## Repository layout (deliverable)
 
 ```
@@ -37,6 +59,9 @@ zk/
 ├── README.md
 ├── SPEC.md                      # vault schema spec — single source of truth,
 │                                # referenced by both skills
+├── decisions.md                 # repo-level: durable, binding choices only
+├── enhancements.md              # repo-level parking lot: deferrals (with
+│                                # trigger:) + out-of-scope enhancements
 ├── scripts/
 │   ├── zk_config.py             # locate vault (env var ZK_VAULT or zk.toml)
 │   ├── zk_read.py               # note loading, frontmatter parse, private/ filter
