@@ -46,3 +46,10 @@ checkpoint alongside problem.md's own revisit clause.
   generated like index.md, never hand-maintained.
 - Source: item 2 walkthrough (user's sub-index-header idea; the marker is the
   primitive that makes this generatable).
+
+## E-007 — Marketplace-style plugin packaging
+- What: ship zk as an installable Claude Code plugin (manifest + marketplace
+  listing) instead of the manual symlink/copy into `.claude/skills/` set by
+  D-007.
+- trigger: v1 working end to end (problem.md acceptance criteria 1–7 met).
+- Source: CLAUDE.md open question 2; D-007.

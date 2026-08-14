@@ -84,8 +84,13 @@ fired trigger graduates via a new decision entry or is consciously re-parked.
 
 ## Open questions
 
-Ask before building past them:
+None outstanding. Both prior questions are settled — see
+[docs/decisions.md](docs/decisions.md):
 
-- Dev/test vault path vs. the real OneDrive vault.
-- Packaging: standalone repo the user symlinks/installs (current default) vs.
-  marketplace-style plugin dir vs. `.claude/skills/` per project.
+- Dev/test vault → D-006. Hard error on missing config; `tests/fixtures/vault/`
+  copied to `tmp_path`; demo vault is a separate, later deliverable.
+- Packaging → D-007. Standalone repo, manual install into `.claude/skills/`.
+  Plugin packaging parked at E-007.
+
+Build order is fixed by D-008: scripts (verified, pytest green) → skills
+(iterated against live sessions) → demo vault. Skills stay in v1 scope.
