@@ -141,8 +141,14 @@ appear. Include a generation timestamp header.
 - `--fix` autocorrects mechanical issues (missing `updated`, tag casing);
   reports but never auto-rewrites prose.
 
-`zk_read.py` — shared library, not user-facing. Central place for the
-private/archive exclusion so it cannot be bypassed by other scripts.
+`zk_read.py` — central place for the private/archive exclusion so it cannot be
+bypassed by other scripts.
+
+*Amended 2026-08-18 — D-067.* This line previously read "shared library, not
+user-facing," which contradicted CLAUDE.md's requirement that every script be
+CLI-invocable. `zk_read.py` now has a minimal CLI (`<slug>`, `--list`) exposing
+existing library functions only. The chokepoint above all must be drivable
+without reimplementation, or bypassing it becomes the easier path.
 
 ## Skills
 
@@ -170,7 +176,8 @@ by relative path, executed not pasted.
   2. If a durable architectural choice was made, append an entry to
      `decisions.md` (date, decision, why, alternatives rejected — 4 lines max).
   3. If a reusable cross-project insight emerged, write/update a `topics/` note.
-  4. Run `zk_lint.py --fix` on everything written; fix any residual complaints.
+  4. Run `zk_lint.py --fix` on everything written; fix residual **errors**;
+     warnings are reported, not acted on (per D-039).
   5. Run `zk_index.py`.
   6. Report: files written + one-line summary each. Show the user; incorporate
      corrections if offered, then re-lint and re-index.
