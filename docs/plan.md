@@ -18,7 +18,7 @@ skeleton left open by name.
 
 | ID | Chunk | Touches | Size | Depends on | Status |
 |---|---|---|---|---|---|
-| T-00 | Ratify planning-input decisions | `decisions.md` `architecture.md` | S | — | **blocked** |
+| T-00 | Ratify planning-input decisions | `decisions.md` `architecture.md` | S | — | **done** |
 | T-01 | Walking skeleton | `zk_config` `zk_read` `zk_recall` | M | T-00 | todo |
 | T-02 | Config completion | `zk_config` | M | T-01 | todo |
 | T-03 | Read hardening + exclusion suite | `zk_read` | L | T-01 | todo |
@@ -172,6 +172,22 @@ Applies to every chunk; task files add to it, never replace it.
   (D-016). Where a near-match exists, the message names it.
 - No vault walking outside `zk_read.py` (D-053, §9).
 
+## Environment — verified 2026-08-18
+
+Global `CLAUDE.md` names an Anaconda interpreter that does not exist on this machine and
+states Python is not on PATH. Both are stale. Actual, confirmed at T-00 close:
+
+| | Value |
+|---|---|
+| Interpreter | `C:\Users\bbodee\AppData\Local\Programs\Python\Python314\python.exe` |
+| Version | CPython 3.14.6 — clears the 3.11+ floor; `tomllib` imports, so D-017 adds no dependency |
+| On PATH | **yes**, as `python` |
+| `pyyaml` | **not installed** — T-01 setup |
+| `pytest` | **not installed** — T-01 setup |
+
+Recorded here rather than acted on: global `CLAUDE.md` is the user's private file and
+outside this repo's jurisdiction. T-01 installs the two packages as its first step.
+
 ## Rendering obligations (D-068)
 
 Every decision arising from this build bumps `architecture.md`'s `rendered-against:`
@@ -182,13 +198,12 @@ Task files record which sections they touch. At T-09 the script-layer sections o
 architecture.md are re-read against shipped behaviour, since a rendering that describes
 unbuilt code and a rendering that describes built code are checked differently.
 
-## Planning-input decisions — **pending ratification**
+## Planning-input decisions — **ratified as D-069 (2026-08-18)**
 
-Three choices the ledger left to the planning phase. They are recorded here as plan
-state and are **not yet ratified**; the proposed entry text is in
-[tasks/T-00-ratify.md](tasks/T-00-ratify.md). Nothing in `decisions.md` has been
-appended. Until it is, treat the three below as this file's own claims, not as binding
-repo state.
+Three choices the ledger left to the planning phase, now binding repo state. The entry
+also records the second sanctioned byte-level claim and supersedes D-006's fixture-path
+clause and D-059's sweep scope. `--topics` semantics went out separately as D-070, and
+line-ending policy as D-071.
 
 **(1) Test-suite layout.** One test module per script; `zk_lint.py` splits by the
 D-042/D-064 layer taxonomy so a code's tests are findable from its §10 table row.

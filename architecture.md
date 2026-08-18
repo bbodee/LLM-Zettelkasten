@@ -8,7 +8,7 @@ This file is a **rendering of ratified state** (D-068). Every claim traces to SP
 decision entry, or [docs/problem.md](docs/problem.md). It introduces nothing, and any
 conflict between this file and its sources resolves **toward the source**.
 
-**rendered-against: D-068**
+**rendered-against: D-071**
 
 *Diagnostic.* The gap between that value and the tail of
 [docs/decisions.md](docs/decisions.md) is the **bound on how stale this file can be** —
@@ -51,6 +51,7 @@ LLM-Zettelkasten/
 ├── CLAUDE.md                    # rules and constraints; root by convention
 ├── architecture.md              # this file; root by convention
 ├── zk.toml.example              # copy to zk.toml and edit; never read
+├── .gitattributes               # `* text eol=lf` — pinned in transport (D-071)
 ├── LICENSE
 ├── docs/                        # ALL prose docs live here — never at root
 │   ├── problem.md               # origin spec: scope, acceptance criteria
@@ -58,15 +59,19 @@ LLM-Zettelkasten/
 │   │                            # referenced by both skills
 │   ├── decisions.md             # repo-level: durable, binding choices (D-NNN)
 │   ├── enhancements.md          # repo-level parking lot (E-NNN)
-│   └── research.md              # prior-art survey (closed)
+│   ├── research.md              # prior-art survey (closed)
+│   ├── plan.md                  # build state and chunk boundaries (D-069)
+│   └── tasks/T-NN-<slug>.md     # one per chunk; contract + DoD (D-069)
 ├── scripts/                     # Python; five scripts, per D-007
 │   ├── zk_config.py
 │   ├── zk_read.py
 │   ├── zk_recall.py
 │   ├── zk_index.py
 │   └── zk_lint.py
-├── tests/
-│   └── fixtures/vault/          # D-006; copied to tmp_path per test
+├── tests/                       # one module per script; lint split by layer (D-069)
+│   ├── conftest.py              # vault factories; ZK_VAULT per test (D-006)
+│   ├── fixtures/vaults/<name>/  # plural; each extends D-062's ground state
+│   └── meta/                    # invariants whose violation is silent (D-028)
 ├── skills/
 │   ├── zk-recall/SKILL.md
 │   └── zk-log/SKILL.md
@@ -75,6 +80,14 @@ LLM-Zettelkasten/
 ```
 
 Root holds tooling-convention files only. Any other `.md` goes in `docs/`.
+
+Planning artifacts are living text, edited in place (D-069, D-040). Fixture vaults are
+plural because D-053, D-062, and D-063 each require a different one; the ground state is
+built by a conftest factory rather than committed, since git tracks no empty directory
+and a `.gitkeep` would be a stray file in the one fixture that must be pristine (D-069).
+
+*Corrected 2026-08-18 — D-069, D-071.* This block previously showed a single
+`tests/fixtures/vault/` and no home for planning artifacts or line-ending policy.
 
 The script count is fixed at five (D-007). Vault creation is a flag on `zk_config.py`,
 not a sixth script (D-061).
@@ -124,6 +137,9 @@ not a sixth script (D-061).
 - Emits one markdown bundle to stdout, in order: index section → `project.md` →
   `decisions.md` → last N logs (default 5, `--deep` = all) → topic notes matching the
   project's tags. Hard-excludes `private/` and `archive/` regardless of flags.
+- `--topics a,b` **replaces** the tag join rather than unioning with it (D-070). The join
+  is a computed default judgment; the flag is the user overruling it, and a union could
+  only add.
 - The "index section" is **computed at read time**, not stored — index lines whose path
   starts with `projects/<slug>/`, plus tag-matched Topics lines. No per-project index
   file exists (D-010).

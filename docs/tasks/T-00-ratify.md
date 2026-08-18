@@ -1,6 +1,6 @@
 # T-00 — Ratify the planning-input decisions
 
-**Size:** S · **Depends on:** — · **Status:** blocked on user approval
+**Size:** S · **Depends on:** — · **Status:** **done 2026-08-18**
 **Binds:** D-002, D-006, D-040, D-056, D-057, D-060, D-062, D-063, D-068
 
 Gate on every other chunk. T-01 creates `tests/` and the first fixture vault, so the
@@ -185,3 +185,23 @@ reader of D-053 and D-059 inherits their scope rather than re-deriving it.
 If the entry is split or reworded, `docs/plan.md` §"Planning-input decisions" and every
 task file citing D-069 are updated in the same change. Nothing else in the plan depends
 on the entry's shape, only on its content.
+
+## Contract deviations
+
+- **`git add --renormalize .` produced an empty diff.** Confirmed rather than assumed:
+  `core.autocrlf=true` normalizes on the way *into* the index, so the committed blobs
+  were already LF and only the working copy was ever at risk, on checkout. Verified by
+  byte count — zero `\r` across every tracked file — and by `git ls-files --eol`
+  reporting `i/lf w/lf`. The fixture vault is therefore **born** under the pinned regime
+  rather than migrated into it, which is what rider (2) existed to guarantee.
+- **The three appends shipped in one commit, not three.** Each carries a same-change
+  obligation under D-040 — D-069 its two supersession markers, D-070 the SPEC §8.1
+  sentence, D-071 `.gitattributes` — and all three entries are one contiguous edit to one
+  append-only file. Splitting would have meant staging hunks within that edit, which is
+  artificial rather than clearer. `.gitattributes` landing with D-071 is satisfied.
+- **Environment finding for T-01, unrelated to this task.** The interpreter is not at the
+  path global CLAUDE.md documents and is not the distribution it names. Actual:
+  `C:\Users\bbodee\AppData\Local\Programs\Python\Python314\python.exe`, CPython 3.14.6,
+  **on PATH as `python`**. Clears the 3.11+ floor and `tomllib` imports, so D-017's
+  no-new-dependency claim holds. `pyyaml` and `pytest` are **not installed** — both are
+  T-01 setup, not a plan defect. Recorded in [plan.md](../plan.md).
