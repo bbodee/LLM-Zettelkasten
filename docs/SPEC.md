@@ -901,6 +901,15 @@ per-project index file exists (E-004/E-005 park the alternatives).
 
 Order: index section → `project.md` → `decisions.md` → last N logs → tag-matched topics.
 
+`[script]` **`--topics a,b` replaces the tag join; it never unions with it** (D-070). Only
+the named topics are pulled, and naming a tag the project does not carry is not an error —
+reaching outside the join is the point of an override.
+
+*Added 2026-08-18 — D-070.* This section named the tag-matched topics without saying what
+an explicit `--topics` does to them, leaving override and union equally readable. The tag
+join is a computed default judgment (D-010) and the flag is the user overruling it; a
+union could only add, and that outcome is already reachable by omitting the flag.
+
 `[script]` **Absent sections are omitted entirely.** No empty headers, no placeholder
 text, no narration of what is missing. A project with only a charter emits a charter.
 

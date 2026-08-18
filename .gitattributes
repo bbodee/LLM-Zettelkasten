@@ -1,0 +1,7 @@
+# Line endings are pinned in transport (D-071).
+# core.autocrlf silently falsifies three ratified byte-level claims on checkout:
+# D-012's index determinism, D-018/D-028's newline discipline, and D-068's
+# structural coupling asserted as byte-equality (D-069).
+# Broad by decision — a per-extension pin leaves every future file class as a
+# rediscovery. Binary escape hatches wait for the first binary file.
+* text eol=lf
