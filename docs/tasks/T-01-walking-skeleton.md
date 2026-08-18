@@ -163,6 +163,10 @@ Both lint-clean by inspection now, by test at T-06. Growth belongs in `populated
   (scope ruled 2026-08-18, recorded in [plan.md](../plan.md)).
 - `meta/test_encoding.py` green: no `open(` without `encoding=`, no write mode without
   `newline=`, anywhere in `scripts/`.
+- **A committed fixture note reads with no `\r`, opened in binary** (D-071). `zk` cannot
+  enforce a checkout it does not perform, so this is the resident guard against a
+  stripped `.gitattributes` or a misconfigured clone. Sibling to the meta-test above:
+  that one reads our source, this one reads what git actually delivered.
 - Runs identically on Windows and POSIX. Paths compared as `PurePosixPath`.
 
 ## Contract deviations

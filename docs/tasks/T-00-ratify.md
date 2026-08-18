@@ -11,6 +11,8 @@ layout must be ratified before it lands or the first commit encodes an unratifie
 - Append `D-069` to `docs/decisions.md` — the three planning inputs, the home of planning
   artifacts, and the second sanctioned byte-level claim.
 - Append `D-070` immediately after it — `--topics` override semantics.
+- Append `D-071` immediately after that — line endings pinned in transport, with
+  `.gitattributes` landing in the **same commit** per D-040.
 - Append `superseded-by: D-069 (2026-08-18) — fixture path only` to **D-006**. Partial
   supersession with a scope tail, per D-056's grammar — D-006's hard-error posture,
   `ZK_VAULT`-per-test rule, copy-to-`tmp_path` rule, gitignore split, and
@@ -119,15 +121,52 @@ D-068 clause 1 forbids anything originating in a rendering.
   the wrong thing).
 ```
 
+## Proposed entry text — D-071
+
+```markdown
+## D-071 — 2026-08-18 — Line endings are pinned in transport; `core.autocrlf` falsifies byte claims
+- Decision: a repo-root `.gitattributes` pins `* text eol=lf` — **broad, not
+  per-extension**. It lands in the same commit as this entry (D-040). Binary escape
+  hatches are added when the first binary file arrives, never speculatively.
+- Why: **three ratified rules assert byte-level properties that `core.autocrlf=true`
+  silently falsifies on checkout.** D-012 requires `index.md` to render byte-identically;
+  D-018 and D-028 require `newline="\n"` on every write in `scripts/`; D-068's structural
+  coupling is asserted as byte-equality between SPEC §13's fences and the fixture files
+  (D-069). A fresh clone on a Windows machine fails all three for reasons that have
+  nothing to do with the code, and the cause is invisible in every diff.
+- **Lineage: this is D-028's explicit-over-platform-default rule applied to git's
+  transport layer.** D-028 banned bare `open()` because Windows silently substitutes the
+  system ANSI codepage. `core.autocrlf` is the same shape one layer out — a platform
+  default, silently applied, corrupting bytes in a repo whose tests assert them. Same
+  failure signature too: correct-looking code, no exception, wrong bytes, discovered late.
+- Why broad rather than per-extension: a narrow pin leaves **every future file class as a
+  rediscovery**, and the rediscovery arrives as a failing test whose cause is not in the
+  diff. CRLF churn in prose would also pollute every future seam diff, which is the
+  surface D-040's amendments are read on.
+- Guard: `zk` cannot enforce a checkout it does not perform, so the guard is **resident in
+  the suite** — T-01 asserts a committed fixture reads with no `\r` in binary mode.
+  Sibling to D-028's meta-test, and it catches a stripped `.gitattributes` or a
+  misconfigured clone forever.
+- Rejected: per-extension pinning (rediscovery per file class); `core.autocrlf=input` as a
+  documented setup step (a setting the repo cannot verify, and D-006's posture is hard
+  failure over relying on the user having configured something); the D-028 meta-test alone
+  (it reads `scripts/` source for `newline=` arguments and cannot see what the checkout did
+  to fixture bytes); binary escape hatches now (no binary exists — rules grow from observed
+  need, D-035).
+```
+
 ## Definition of done
 
-- `D-069` then `D-070` appended at the bottom of `docs/decisions.md` — IDs contiguous,
-  newest last (D-047).
+- `D-069`, `D-070`, `D-071` appended at the bottom of `docs/decisions.md` in that order —
+  IDs contiguous, newest last (D-047).
 - D-006 and D-059 each carry one scope-tailed `superseded-by:` line, and nothing else in
   either entry is touched — an amendment is an append, not an edit (D-057).
 - SPEC §8.1 carries the `--topics` sentence with its dated seam citing D-070.
-- `architecture.md`: `rendered-against: D-070`, layout block re-rendered, no claim
-  introduced that does not trace to a decision or the plan.
+- `.gitattributes` committed **with** D-071, then `git add --renormalize .` run
+  immediately and its diff confirmed empty or line-ending-only — so the fixture vault is
+  born under the pinned regime rather than migrated into it.
+- `architecture.md`: `rendered-against: D-071`, layout block and the `zk_recall.py`
+  section re-rendered, no claim introduced that does not trace to a decision or the plan.
 - `docs/plan.md`'s "pending ratification" heading is retitled and the disclaimer removed.
 - **No `enhancements.md` change.** Nothing here was deferred, and E-017 stays unmarked —
   P-23's §10↔`RULES` parity test is the same *shape* against a different pair and does
