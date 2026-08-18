@@ -80,6 +80,10 @@ fired trigger graduates via a new decision entry or is consciously re-parked.
 
 - **Before ending any task:** update `plan.md` status, append decisions to
   `decisions.md`, note contract deviations in the task file.
+- **Renderings (D-068).** Every decision bumps `architecture.md`'s
+  `rendered-against:` field. A decision that touches rendered content **also
+  re-renders that section**. Bumping is unconditional and free; re-rendering is
+  conditional on the decision changing what the rendering claims.
 - **pytest green before any commit to `zk/`.**
 
 ## Open questions
