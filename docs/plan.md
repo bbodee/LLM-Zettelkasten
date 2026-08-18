@@ -20,7 +20,7 @@ skeleton left open by name.
 |---|---|---|---|---|---|
 | T-00 | Ratify planning-input decisions | `decisions.md` `architecture.md` | S | — | **done** |
 | T-01 | Walking skeleton | `zk_config` `zk_read` `zk_recall` | M | T-00 | **done** |
-| T-02 | Config completion | `zk_config` | M | T-01 | todo |
+| T-02 | Config completion | `zk_config` | M | T-01 | **done** |
 | T-03 | Read hardening + exclusion suite | `zk_read` | L | T-01 | todo |
 | T-04 | Index + vault init | `zk_index` `zk_config` | L | T-02, T-03 | todo |
 | T-05 | Recall completion | `zk_recall` | M | T-04 | todo |

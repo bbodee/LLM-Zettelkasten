@@ -1,6 +1,6 @@
 # T-02 — Config completion
 
-**Size:** M · **Depends on:** T-01 · **Status:** todo
+**Size:** M · **Depends on:** T-01 · **Status:** done
 **Binds:** SPEC §1, §11 · D-006, D-014, D-015, D-016, D-017, D-018, D-019, D-022, D-062
 
 Closes the `zk.toml` seam T-01 opened. `--init` is **not** here — it calls
@@ -103,4 +103,45 @@ subject is directory shape and file content, not vault content. Cases:
 
 ## Contract deviations
 
-*(record here during execution — none yet)*
+Recorded at execution, 2026-08-18. All four are in-jurisdiction implementation
+calls; none required a decision entry, and none changed a ratified claim.
+
+**1. One exit-2 family beyond the grading table: an `ignore` entry that could
+never match.** The table classifies `private`/`archive` and nothing else about
+`ignore`. An entry that is valid TOML but not a top-level directory name —
+`"attachments/"`, `"*.tmp"`, `"notes/drafts"`, `""`, `".."` — is rejected at 2,
+not accepted. D-022 fixes the semantics as exact names, so such an entry silences
+nothing while reading as though it had, which is the silence D-022 exists to end.
+D-019's tiebreak grades it 2: the same file fails identically for every
+invocation. The message names the corrected entry where one exists
+(`invalid ignore entry 'attachments/' — did you mean 'attachments'?`) and omits
+the suggestion where none does. A reserved name is checked against the *cleaned*
+entry, so `"private/"` is one mistake rather than two and is never answered with
+a suggestion that is itself a hard error.
+
+**2. `zk.toml` is read as `utf-8-sig`.** Unspecified; D-028 places BOM tolerance
+in `zk_read.py`, which governs notes and not this file. Notepad writes a BOM, and
+`tomllib` answers `Invalid statement (at line 1, column 1)` — the undirected
+failure D-016 bans, pointing at the wrong line. A non-UTF-8 file is caught and
+re-emitted directed, in the same graded family as "unparseable".
+
+**3. The pre-table `zk.toml` gets its own message.** D-022 converted the file
+from D-017's bare key to a `[zk]` table, so a top-level `vault = "…"` now lands
+on "unknown key" — true, and misdirecting, since the key is right and only the
+header is missing. Special-cased to name the missing `[zk]` line. No new grade.
+
+**4. One T-01 test hardened, not replaced.**
+`test_main_reports_and_returns_2_when_unconfigured` ran from the real cwd, which
+was inert while step 2 did not exist. It now runs from `tmp_path`; otherwise a
+developer's own repo-root `zk.toml` would decide the test.
+
+## Surfaced, not settled here
+
+**The em dash in SPEC §1's mandated message is codepage-dependent on Windows
+stderr.** `unknown key 'valut' in zk.toml — did you mean 'vault'?` is spec text,
+so the character is not ours to drop. Verified behaviour: a redirected stderr
+encodes it in the ANSI codepage (byte `0x97`, which a UTF-8 reader shows as
+mojibake), and a codepage lacking it degrades to the literal `—`. It
+**never raises and never changes the exit code** — Python's stderr uses
+`backslashreplace`. Left open because the remedy is an output-encoding policy
+binding all five scripts, which is decision-shaped and larger than this chunk.
