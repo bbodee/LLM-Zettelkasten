@@ -52,6 +52,7 @@ LLM-Zettelkasten/
 ├── architecture.md              # this file; root by convention
 ├── zk.toml.example              # copy to zk.toml and edit; never read
 ├── .gitattributes               # `* text eol=lf` — pinned in transport (D-071)
+├── .gitignore                   # build artefacts; `zk.toml` never committed (D-006)
 ├── LICENSE
 ├── docs/                        # ALL prose docs live here — never at root
 │   ├── problem.md               # origin spec: scope, acceptance criteria
@@ -88,6 +89,10 @@ and a `.gitkeep` would be a stray file in the one fixture that must be pristine 
 
 *Corrected 2026-08-18 — D-069, D-071.* This block previously showed a single
 `tests/fixtures/vault/` and no home for planning artifacts or line-ending policy.
+
+*Corrected 2026-08-18 — D-006, at T-01.* The block omitted `.gitignore`, whose
+`zk.toml` line D-006 ratifies. No `rendered-against:` bump: no decision was made, and
+listing a file the ledger already requires is rendering, not origination.
 
 The script count is fixed at five (D-007). Vault creation is a flag on `zk_config.py`,
 not a sixth script (D-061).

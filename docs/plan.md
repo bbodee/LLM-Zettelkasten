@@ -19,7 +19,7 @@ skeleton left open by name.
 | ID | Chunk | Touches | Size | Depends on | Status |
 |---|---|---|---|---|---|
 | T-00 | Ratify planning-input decisions | `decisions.md` `architecture.md` | S | — | **done** |
-| T-01 | Walking skeleton | `zk_config` `zk_read` `zk_recall` | M | T-00 | todo |
+| T-01 | Walking skeleton | `zk_config` `zk_read` `zk_recall` | M | T-00 | **done** |
 | T-02 | Config completion | `zk_config` | M | T-01 | todo |
 | T-03 | Read hardening + exclusion suite | `zk_read` | L | T-01 | todo |
 | T-04 | Index + vault init | `zk_index` `zk_config` | L | T-02, T-03 | todo |
@@ -135,6 +135,13 @@ seam not listed here is a defect, not a deferral.
 | T-01 | Bundle section 1 (index section) — no `index.md` exists yet | T-05 |
 | T-01 | `--logs` / `--deep` / `--topics` flags | T-05 |
 | T-01 | Exclusion is implemented and unit-tested; the behavioral suite is not built | T-03 |
+| T-01 | The no-vault message names `zk_config.py --init`, which is not a flag yet | T-04 |
+| T-01 | `ground_vault` writes territory only — no `index.md` to render against | T-04 |
+
+The `--init` row is the seam the T-01 contract asked for deliberately: §1 and D-006
+require the no-vault error to name the command that makes a vault, and D-061 names that
+command `zk_config.py --init`. Writing the message now and the flag at T-04 keeps the
+message final rather than provisional; the alternative was a stub, which this chunk bans.
 | T-03 | Suite asserts reads only — index and bundle arms have no target yet | T-04, T-05 |
 | T-04 | `--init` prints the config next-step; `zk.toml` writing is never automated | — (by design, D-022) |
 | T-06 | `--fix` is not implemented; fixable codes detect only | T-08 |
@@ -182,11 +189,11 @@ states Python is not on PATH. Both are stale. Actual, confirmed at T-00 close:
 | Interpreter | `C:\Users\bbodee\AppData\Local\Programs\Python\Python314\python.exe` |
 | Version | CPython 3.14.6 — clears the 3.11+ floor; `tomllib` imports, so D-017 adds no dependency |
 | On PATH | **yes**, as `python` |
-| `pyyaml` | **not installed** — T-01 setup |
-| `pytest` | **not installed** — T-01 setup |
+| `pyyaml` | **6.0.3** — installed at T-01 |
+| `pytest` | **9.1.1** — installed at T-01 |
 
 Recorded here rather than acted on: global `CLAUDE.md` is the user's private file and
-outside this repo's jurisdiction. T-01 installs the two packages as its first step.
+outside this repo's jurisdiction. T-01 installed the two packages as its first step.
 
 ## Rendering obligations (D-068)
 

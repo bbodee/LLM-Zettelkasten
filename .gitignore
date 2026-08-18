@@ -1,0 +1,8 @@
+# Python build artefacts.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# zk.toml is the user's own vault pointer and is never committed (D-006).
+# zk.toml.example is committed instead; both land at T-02.
+zk.toml

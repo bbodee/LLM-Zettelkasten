@@ -1,6 +1,6 @@
 # T-01 — Walking skeleton
 
-**Size:** M · **Depends on:** T-00 · **Status:** todo
+**Size:** M · **Depends on:** T-00 · **Status:** done (2026-08-18)
 **Binds:** SPEC §1 (partial), §2, §4, §8.1, §9, §11 · D-006, D-013, D-014, D-016, D-018,
 D-019, D-020, D-021, D-024, D-028, D-052, D-053, D-062, D-067, D-069
 
@@ -171,4 +171,102 @@ Both lint-clean by inspection now, by test at T-06. Growth belongs in `populated
 
 ## Contract deviations
 
-*(record here during execution — none yet)*
+One, and it is a test-harness signature only.
+
+- **`vault_factory(ground_vault, use_vault)`, not `(tmp_path, monkeypatch)`.** The
+  contract's two arguments are what the fixture *needs*; composing the two fixtures that
+  already own those needs avoids a second copy of the ground-state `mkdir`s and a second
+  copy of the `setenv` + `reset_cache` pair. Behaviour is unchanged: it still copies
+  `fixtures/vaults/<name>/` onto a ground vault in `tmp_path`, sets `ZK_VAULT`, and
+  resets the cache.
+
+Nothing else in the contract moved. Every listed signature is implemented verbatim.
+
+## Decisions made in-jurisdiction
+
+Implementation choices with no SPEC section or decision entry behind them. They bind this
+code and nothing beyond it; a choice that later needs to bind *contract* gets promoted.
+
+- **An empty or whitespace-only `ZK_VAULT` reads as unset.** Windows deletes a variable
+  set to the empty string, so the two states are one situation on that platform.
+  Conflating them deliberately is what keeps AC-7 true; the alternative diverges by
+  platform for a single user mistake.
+- **Absoluteness is checked between `expanduser()` and `resolve()`.** `resolve()` anchors
+  a relative path to cwd, which D-018 forbids, so the check cannot come after it. A
+  consequence worth naming: a drive-less `/vault` is rejected on Windows and accepted on
+  POSIX, because on Windows it resolves against the current drive and is therefore
+  cwd-relative. Divergent input, not divergent behaviour.
+- **The banner renders `path.as_posix()`.** §1's own example prints a Windows path with
+  forward slashes, and a platform-stable banner is one less thing for AC-7 to carry.
+- **`is_excluded` relativizes the resolved target against the vault when it lands
+  inside, and judges its raw components when it lands outside.** Relativizing is what
+  stops a vault that itself lives under some unrelated `archive/` directory from
+  excluding its own entire contents. Judging an outside target on raw components
+  over-excludes, which is the direction D-053 says to err in.
+- **The walker prunes excluded directories rather than filtering after the fact.**
+  `archive/` is documented to hold a whole legacy vault; descending into it to discard
+  the results would charge every command for content no command may read.
+- **Symlink cycles are broken by a visited-resolved-directory set.** Hanging is not one
+  of D-019's three outcomes.
+- **Notes are emitted into the bundle through `zk_read.render_frontmatter`, not copied
+  from the file.** A second reader in `zk_recall.py` would be a second home for
+  `utf-8-sig` handling, which D-028 puts in exactly one place. YAML folding is disabled
+  because §5 requires `summary` on one line, and flow style is kept for simple
+  collections so `tags: [a, b]` stays dense. Values round-trip semantically; only
+  quoting and flow style may differ — the latitude D-029 already grants `--fix`.
+- **Each note appears under a `#` path heading.** The bundle is not a vault note, so §6's
+  H1 ban does not reach it, and a note's own `##` sections need a parent rather than a
+  peer. There are **no category headers** — grouping is carried entirely by §8.1's order,
+  which is what makes "absent sections omitted entirely" true by construction.
+- **Logs sort by filename date descending with a vault-relative path tiebreak**, then cap
+  at the architecture.md default of 5. The tiebreak is D-012's pinned sort applied to a
+  second artifact; without it two same-day logs could swap between runs.
+- **The inventory comment counts decision *entries*, not files** — §8.1's own example
+  reads `4 decisions` for a file that holds four. Counted by matching `^## D-\d+`, which
+  needs none of the lint machinery arriving at T-06. When nothing survives, the comment
+  is `<!-- zk: <slug> -->` with no trailing empty list.
+- **The skip notice carries §8.1's wording verbatim and not the parse shape.** Which of
+  the three shapes failed goes to stderr: grading a parse failure is lint's jurisdiction
+  (D-052), and one skip is one line rather than the wrapped pair §8.1 prints for page
+  width.
+- **`zk_read.py --list` exits 0 on a zero-slug vault**, printing nothing to stdout and
+  D-062's message to stderr. Enumerating zero slugs is a complete answer, so it is not
+  D-019's negative result; stdout stays machine-parseable and the human still gets told.
+- **§2's and §12's slug messages live in `zk_read.unresolved_error`.** Both scripts and
+  both skills branch on `resolve_project`; letting either reimplement its *messages*
+  would be the drift D-030 deletes copies to prevent.
+- **The D-071 guard is `tests/meta/test_line_endings.py`**, a module D-069's layout
+  sketch does not enumerate. What D-069 makes normative is the taxonomy — cross-cutting
+  invariants get their own module under `meta/` — and a guard over delivered bytes is
+  cross-cutting. It is verified to fire: planting CRLF in the fixture fails it.
+- **`tests/conftest.py` puts `scripts/` on `sys.path` and adds a `use_vault` fixture and
+  a `write_note` helper.** No packaging, no `__init__.py`; `import zk_config` then works
+  identically under pytest and under `python scripts/zk_read.py`, where the interpreter
+  supplies the same path itself.
+- **`.gitignore` created** with `__pycache__/`, `*.py[cod]`, `.pytest_cache/`, and
+  `zk.toml`. The last traces to D-006 and is T-02's DoD line; the rest are this chunk's
+  own artefacts, which appear the moment pytest first runs. architecture.md's root layout
+  gained the row.
+
+## D-071 confirmed load-bearing, not theoretical
+
+This machine has `core.autocrlf=true` set globally. `.gitattributes` overrides it, so
+every tracked file checks out LF — which is D-071 working exactly as argued, on the very
+configuration it was written against.
+
+One residue was found and fixed: `LICENSE` was `i/lf w/crlf`. Git's stored copy was
+already correct; the *working tree* copy predated `.gitattributes` and had never been
+re-checked-out. Refreshed from the index — no content change, and a fresh clone was never
+affected. The guard's sweep now covers extensionless committed text, since `LICENSE` is
+the file a stale tree holds CRLF in longest.
+
+## Notes for later chunks
+
+- **T-02** inherits `resolve_vault`'s `cwd` parameter, currently accepted and unused —
+  it is the input to D-015's fenced search. `VaultConfig.ignore` has no default, so the
+  `zk.toml` branch must state it.
+- **T-03** inherits `iter_note_paths` unchanged, plus `relative`, `iter_notes`, and
+  `render_frontmatter`. `resolve_project` already returns ABSENT for a reserved-name
+  slug; ZK044 is the warning that keeps that from being traceless.
+- **T-04** closes two seams now listed in plan.md: `--init` (named by the no-vault
+  message) and `ground_vault`'s missing `index.md`.
